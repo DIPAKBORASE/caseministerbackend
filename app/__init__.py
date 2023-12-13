@@ -28,9 +28,12 @@ init_db(app, conn)  # Pass both app and conn to init_db
 # Import and register your blueprints
 from .routes.authentication_routes import auth_bp
 from .routes.sendotp import sendotp_bp
+from .routes.verifyotp import verifyotp_bp
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(sendotp_bp, url_prefix='/api/auth')
+app.register_blueprint(verifyotp_bp, url_prefix='/api/auth')
+
 
 # Any other configurations or setup code can go here
 
