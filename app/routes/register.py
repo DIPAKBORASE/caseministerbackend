@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from ..utils.database import get_db
 import datetime
 import bcrypt  # Import bcrypt
+from psycopg2.extras import DictCursor  # Import DictCursor
+
 
 register_bp = Blueprint('register', __name__)
 
@@ -19,7 +21,7 @@ def register():
 
     # Verify OTP
     try:
-        with db.cursor(dictionary=True) as cursor:
+        with db.cursor(cursor_factory=DictCursor) as cursor:  # Use DictCursor
             cursor.execute("SELECT * FROM otp_table WHERE email = %s", (email,))
             otp_record = cursor.fetchone()
 
@@ -34,17 +36,25 @@ def register():
 
                 if str(stored_otp) == str(user_otp) and current_time < expiration:
                     # OTP is valid, proceed to hash password and register user
+                    # Check if the user already exists
+                    cursor.execute("SELECT * FROM user_table WHERE email = %s", (email,))
+                    existing_user = cursor.fetchone()
+
+                    if existing_user:
+                        return jsonify({"error": "User with this email already exists"}), 409
+
                     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())  # Hash the password
+
                     try:
                         with db.cursor() as user_cursor:
                             user_cursor.execute("INSERT INTO user_table (email, password) VALUES (%s, %s)", (email, hashed_password))
-                            db.commit()  
+                            db.commit()
 
                             # Optionally delete the OTP record
                             user_cursor.execute("DELETE FROM otp_table WHERE email = %s", (email,))
                             db.commit()
 
-                        return jsonify({"message": "Registration successful"}), 201
+                        return jsonify({"message": "Registration successful", "email":email}), 201
                     except Exception as e:
                         db.rollback()  # Rollback in case of error
                         return jsonify({"error": f"Error during registration: {str(e)}"}), 500
