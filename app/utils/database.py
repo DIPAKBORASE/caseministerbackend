@@ -1,23 +1,18 @@
-import mysql.connector
-from flask import current_app, g
 import psycopg2
+from flask import current_app, g
+
 # Your database connection parameters
 DB_HOST = "localhost"
 DB_USER = "postgres"
-DB_PASS = "root"
+DB_PASS = "Dipu@1234"
 DB_NAME = "caseminister"
 
-# Create a MySQL connector instance
-conn = psycopg2.connect(
-    host=DB_HOST,
-    user=DB_USER,
-    password=DB_PASS,
-    database=DB_NAME
-)
-
-def init_db(app, conn):
+def init_db(app):
     # Your initialization logic here, if needed
-    app.config['DB_CONN'] = conn  
+    app.config['DB_HOST'] = DB_HOST
+    app.config['DB_USER'] = DB_USER
+    app.config['DB_PASS'] = DB_PASS
+    app.config['DB_NAME'] = DB_NAME
 
 def get_db():
     if 'db' not in g:
@@ -30,5 +25,9 @@ def get_db():
         )
     return g.db
 
-def get_mysql_conn():
-    return mysql_conn 
+# Use this function to close the database connection when done
+def close_db(e=None):
+    db = g.pop('db', None)
+
+    if db is not None:
+        db.close()
