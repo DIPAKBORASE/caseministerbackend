@@ -7,6 +7,7 @@ from .routes.sendotp import sendotp_bp
 from .routes.verifyotp import verifyotp_bp
 from .routes.register import register_bp
 from .routes.cases import user_cases_bp
+from .routes.searchlawyer import search_bp
 
 def create_app():
     app = Flask(__name__)
@@ -27,6 +28,7 @@ def create_app():
     app.register_blueprint(verifyotp_bp, url_prefix='/api/auth')
     app.register_blueprint(register_bp, url_prefix='/api/auth')
     app.register_blueprint(user_cases_bp)
+    app.register_blueprint(search_bp, url_prefix='/api/search')
 
     return app
 
