@@ -8,7 +8,7 @@ user_bp = Blueprint('user', __name__)
 def get_profile_image(user_id):
     # Retrieve the User from the database using user_id
     user = Lawyer.query.get(user_id)
-
+    print(user)
     if user:
         if user.profile_image:
             # Return the image data
@@ -16,7 +16,8 @@ def get_profile_image(user_id):
                 io.BytesIO(user.profile_image),
                 mimetype='image/png',
                 as_attachment=True,
-                download_name=f'{user.username}_profile.png'
+                download_name=f'{user.username}_profile.png',
+            
             )
         else:
             return jsonify({"error": "User does not have a profile image"}), 404

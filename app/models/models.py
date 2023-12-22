@@ -20,9 +20,7 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
 
-    
 class Lawyer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(255), nullable=False)
@@ -30,13 +28,16 @@ class Lawyer(db.Model):
     state = db.Column(db.String(100))
     profession = db.Column(db.String(100))
     experience = db.Column(db.String(50))
-    practice_area = db.Column(db.String(100))
+    practice_area = db.Column(db.String(255))
     court_contactNo = db.Column(db.String(20))
     dob = db.Column(db.Date)
     profile_image = db.Column(db.LargeBinary)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     barcode_number = db.Column(db.String(50), unique=True)
+    description = db.Column(db.Text,nullable=True)
+    language = db.Column(db.String(50), nullable=True)
+
 
     def __repr__(self):
         return f"<Lawyer {self.username}>"
@@ -46,3 +47,25 @@ class Lawyer(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class UserCases(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    case_id = db.Column(db.Integer, db.ForeignKey('case.id'), unique=True)
+
+class LawyerCases(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lawyer_id = db.Column(db.Integer, db.ForeignKey('lawyer.id'))
+    case_id = db.Column(db.Integer, db.ForeignKey('case.id'), unique=True)
+
+class Case(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cnr_number = db.Column(db.String(50), nullable=False)
+    case_name = db.Column(db.String(255), nullable=False)
+    case_description = db.Column(db.Text)
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    next_hearing = db.Column(db.DateTime)
+    status = db.Column(db.String(50))
+    latest_update = db.Column(db.Text)
+    lawyer_assigned = db.Column(db.String(255))

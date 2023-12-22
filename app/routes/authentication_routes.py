@@ -34,7 +34,7 @@ def login():
         # Log the general exception for debugging purposes
         print(f"An error occurred during login: {str(e)}")
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
-
+    
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.form
@@ -63,7 +63,9 @@ def register():
         court_contactNo = data.get('court_contactNo')
         dob = data.get('dob')
         profile_image = request.files.get('profile_image').read()
-    
+        description = data.get('description')
+        language = data.get('language')
+
         if not barcode_number or not experience or not practice_area or not court_contactNo or not dob or not profile_image:
             return jsonify({"error": "Please provide all required fields for lawyers"}), 400
 
@@ -78,15 +80,18 @@ def register():
             court_contactNo=court_contactNo,
             dob=dob,
             profile_image=profile_image,
-            profession=profession
+            profession=profession,
+            description=description,
+            language=language
         )
         new_lawyer.set_password(password)  # Hash the password
 
         db.session.add(new_lawyer)
         db.session.commit()
 
-        # Retrieve the user's ID after committing to the database
+        # Retrieve the lawyer's ID after committing to the database
         user_id = new_lawyer.id
+        user_type = "lawyer"
 
     else:
         new_user = User(
@@ -103,8 +108,6 @@ def register():
 
         # Retrieve the user's ID after committing to the database
         user_id = new_user.id
+        user_type = "normal_user"  # You can customize this based on your needs
 
-    # Store the user's ID in the session
-    # session['user_id'] = user_id
-
-    return jsonify({"message": "Registration successful", "username": username, "id": user_id}), 201
+    return jsonify({"message": "Registration successful", "username": username, "user_id": user_id, "user_type": user_type}), 201
