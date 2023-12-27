@@ -37,6 +37,7 @@ class Lawyer(db.Model):
     barcode_number = db.Column(db.String(50), unique=True)
     description = db.Column(db.Text,nullable=True)
     language = db.Column(db.String(50), nullable=True)
+    rating = db.Column(db.Float, default=0.0)
 
 
     def __repr__(self):

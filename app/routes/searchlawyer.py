@@ -1,13 +1,15 @@
 from flask import Blueprint, jsonify, request
 from ..models.models import Lawyer
+import base64
 
 search_bp = Blueprint('search', __name__)
 
-@search_bp.route('/search-lawyers', methods=['GET'])
+@search_bp.route('/search-lawyers', methods=['POST'])
 def search_lawyers():
     try:
-        # Get query parameters from the request
-        data = request.json
+        # Get JSON data from the request
+        data = request.get_json()
+
         legal_issue = data.get('legal_issue')
         city = data.get('city')
 
@@ -16,22 +18,25 @@ def search_lawyers():
 
         # Query the database to find matching lawyers
         matching_lawyers = Lawyer.query.filter(
-        Lawyer.practice_area.ilike(f"%{legal_issue}%"),
-        Lawyer.state.ilike(f"%{city}%")
-    ).all()
-
+            Lawyer.practice_area.ilike(f"%{legal_issue}%"),
+            Lawyer.state.ilike(f"%{city}%")
+        ).all()
 
         # Prepare the response data
         lawyers_data = []
         for lawyer in matching_lawyers:
+            profile_image_base64 = base64.b64encode(lawyer.profile_image).decode('utf-8') if lawyer.profile_image else None
             lawyer_info = {
                 "id": lawyer.id,
                 "full_name": lawyer.full_name,
                 "username": lawyer.username,
                 "state": lawyer.state,
                 "practice_area": lawyer.practice_area,
-                
-                # Add any other relevant fields you want to include
+                "experience": lawyer.experience,
+                "profile_image": profile_image_base64,
+                "description": lawyer.description,
+                "language": lawyer.language,
+                "rating": lawyer.rating
             }
             lawyers_data.append(lawyer_info)
 
