@@ -19,7 +19,7 @@ def search_lawyers():
         # Query the database to find matching lawyers
         matching_lawyers = Lawyer.query.filter(
             Lawyer.practice_area.ilike(f"%{legal_issue}%"),
-            Lawyer.state.ilike(f"%{city}%")
+            Lawyer.city.ilike(f"%{city}%")
         ).all()
 
         # Prepare the response data

@@ -20,7 +20,6 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
 class Lawyer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(255), nullable=False)
@@ -29,16 +28,31 @@ class Lawyer(db.Model):
     profession = db.Column(db.String(100))
     experience = db.Column(db.String(50))
     practice_area = db.Column(db.String(255))
-    court_contactNo = db.Column(db.String(20))
     dob = db.Column(db.Date)
     profile_image = db.Column(db.LargeBinary)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     barcode_number = db.Column(db.String(50), unique=True)
-    description = db.Column(db.Text,nullable=True)
-    language = db.Column(db.String(50), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    language = db.Column(db.String(100))
     rating = db.Column(db.Float, default=0.0)
-
+    mobile_number = db.Column(db.String(15), unique=True, nullable=True)
+    organisation = db.Column(db.String(100))
+    consultation_fees = db.Column(db.String(255))
+    job_title = db.Column(db.String(50))
+    degree = db.Column(db.String(50))
+    passing_year = db.Column(db.Integer)
+    university = db.Column(db.String(100))
+    linkedin = db.Column(db.String(255), nullable=True)
+    twitter = db.Column(db.String(255), nullable=True)
+    facebook = db.Column(db.String(255), nullable=True)
+    address = db.Column(db.String(255))
+    city = db.Column(db.String(255))
+    postal_code = db.Column(db.String(255))
+    employername = db.Column(db.String(50))
+    period_of_employment = db.Column(db.String(30))
+    published_works = db.Column(db.Text, nullable=True)
+    honors_and_awards = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return f"<Lawyer {self.username}>"
