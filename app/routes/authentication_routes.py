@@ -56,6 +56,10 @@ def register():
         existing_user = Lawyer.query.filter_by(username=username).first()
         if existing_user:
             return jsonify({"error": "Username already exists"}), 400
+        
+        existing_user = Lawyer.query.filter_by(email=email).first()
+        if(existing_user):
+            return jsonify({"error": "Email Id Is already Exist"}),400
 
         barcode_number = data.get('barcode_number')
         experience = data.get('experience')
@@ -84,6 +88,14 @@ def register():
 
         if not barcode_number or not experience or not practice_area or not mobile_number or not dob:
             return jsonify({"error": "Please provide all required fields for lawyers"}), 400
+
+        existing_user = Lawyer.query.filter_by(mobile_number = mobile_number).first()
+        if existing_user:
+            return jsonify({"error":"mobile number is already exist please try with the different mobile number"}),400
+
+        existing_user = Lawyer.query.filter_by(barcode_number=barcode_number).first()
+        if existing_user:
+            return jsonify({"error":"This barcode number is already in use"})
 
         new_lawyer = Lawyer(
             full_name=full_name,
@@ -129,7 +141,11 @@ def register():
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return jsonify({"error": "Username already exists"}), 400
-
+        
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            return jsonify({"error": "Email Id Is already Exist"}), 400
+        
         new_user = User(
             full_name=full_name,
             username=username,
